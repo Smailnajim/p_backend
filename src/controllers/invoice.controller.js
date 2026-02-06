@@ -3,10 +3,10 @@ const pdfService = require('../services/pdf.service');
 
 const invoiceController = {
     // Create new invoice
-    createInvoice: (req, res) => {
+    createInvoice: async (req, res) => {
         try {
             const invoiceData = req.body;
-            const newInvoice = invoiceService.createInvoice(invoiceData);
+            const newInvoice = await invoiceService.createInvoice(invoiceData);
             res.status(201).json({
                 success: true,
                 message: 'Invoice created successfully',
@@ -21,9 +21,9 @@ const invoiceController = {
     },
 
     // Get all invoices
-    getAllInvoices: (req, res) => {
+    getAllInvoices: async (req, res) => {
         try {
-            const invoices = invoiceService.getAllInvoices();
+            const invoices = await invoiceService.getAllInvoices();
             res.json({
                 success: true,
                 data: invoices
@@ -37,10 +37,10 @@ const invoiceController = {
     },
 
     // Get invoice by ID
-    getInvoiceById: (req, res) => {
+    getInvoiceById: async (req, res) => {
         try {
             const { id } = req.params;
-            const invoice = invoiceService.getInvoiceById(id);
+            const invoice = await invoiceService.getInvoiceById(id);
             if (!invoice) {
                 return res.status(404).json({
                     success: false,
@@ -63,7 +63,7 @@ const invoiceController = {
     generateInvoicePDF: async (req, res) => {
         try {
             const { id } = req.params;
-            const invoice = invoiceService.getInvoiceById(id);
+            const invoice = await invoiceService.getInvoiceById(id);
 
             if (!invoice) {
                 return res.status(404).json({
@@ -86,10 +86,10 @@ const invoiceController = {
     },
 
     // Delete invoice
-    deleteInvoice: (req, res) => {
+    deleteInvoice: async (req, res) => {
         try {
             const { id } = req.params;
-            const deleted = invoiceService.deleteInvoice(id);
+            const deleted = await invoiceService.deleteInvoice(id);
 
             if (!deleted) {
                 return res.status(404).json({
@@ -111,7 +111,7 @@ const invoiceController = {
     },
 
     // Update invoice status
-    updateInvoiceStatus: (req, res) => {
+    updateInvoiceStatus: async (req, res) => {
         try {
             const { id } = req.params;
             const { status } = req.body;
@@ -124,7 +124,7 @@ const invoiceController = {
                 });
             }
 
-            const updatedInvoice = invoiceService.updateInvoiceStatus(id, status);
+            const updatedInvoice = await invoiceService.updateInvoiceStatus(id, status);
 
             if (!updatedInvoice) {
                 return res.status(404).json({

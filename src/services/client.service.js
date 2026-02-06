@@ -1,63 +1,36 @@
-const { v4: uuidv4 } = require('uuid');
-
-// In-memory storage
-let clients = [];
+const Client = require('../models/client.model');
 
 const clientService = {
     // Create new client
-    createClient: (data) => {
-        const { name, email, phone, address, company } = data;
-
-        if (!name) {
-            throw new Error('Client name is required');
-        }
-
-        const client = {
-            id: uuidv4(),
-            name,
-            email: email || '',
-            phone: phone || '',
-            address: address || '',
-            company: company || '',
-            createdAt: new Date().toISOString(),
-        };
-
-        clients.push(client);
+    createClient: async (data) => {
+        const client = new Client(data);
+        await client.save();
         return client;
     },
 
     // Get all clients
-    getAllClients: () => {
-        return clients;
+    getAllClients: async () => {
+        return await Client.find().sort({ createdAt: -1 });
     },
 
     // Get client by ID
-    getClientById: (id) => {
-        return clients.find(client => client.id === id);
+    getClientById: async (id) => {
+        return await Client.findById(id);
     },
 
     // Update client
-    updateClient: (id, data) => {
-        const index = clients.findIndex(client => client.id === id);
-        if (index === -1) return null;
-
-        clients[index] = {
-            ...clients[index],
-            ...data,
-            id: clients[index].id,
-            createdAt: clients[index].createdAt,
-            updatedAt: new Date().toISOString(),
-        };
-
-        return clients[index];
+    updateClient: async (id, data) => {
+        return await Client.findByIdAndUpdate(
+            id,
+            { ...data },
+            { new: true, runValidators: true }
+        );
     },
 
     // Delete client
-    deleteClient: (id) => {
-        const index = clients.findIndex(client => client.id === id);
-        if (index === -1) return false;
-        clients.splice(index, 1);
-        return true;
+    deleteClient: async (id) => {
+        const result = await Client.findByIdAndDelete(id);
+        return !!result;
     },
 };
 

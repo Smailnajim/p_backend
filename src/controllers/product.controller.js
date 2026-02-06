@@ -2,10 +2,10 @@ const productService = require('../services/product.service');
 
 const productController = {
     // Create new product
-    createProduct: (req, res) => {
+    createProduct: async (req, res) => {
         try {
             const productData = req.body;
-            const newProduct = productService.createProduct(productData);
+            const newProduct = await productService.createProduct(productData);
             res.status(201).json({
                 success: true,
                 message: 'Product created successfully',
@@ -20,9 +20,9 @@ const productController = {
     },
 
     // Get all products
-    getAllProducts: (req, res) => {
+    getAllProducts: async (req, res) => {
         try {
-            const products = productService.getAllProducts();
+            const products = await productService.getAllProducts();
             res.json({
                 success: true,
                 data: products
@@ -36,10 +36,10 @@ const productController = {
     },
 
     // Get product by ID
-    getProductById: (req, res) => {
+    getProductById: async (req, res) => {
         try {
             const { id } = req.params;
-            const product = productService.getProductById(id);
+            const product = await productService.getProductById(id);
             if (!product) {
                 return res.status(404).json({
                     success: false,
@@ -59,11 +59,11 @@ const productController = {
     },
 
     // Update product
-    updateProduct: (req, res) => {
+    updateProduct: async (req, res) => {
         try {
             const { id } = req.params;
             const productData = req.body;
-            const updatedProduct = productService.updateProduct(id, productData);
+            const updatedProduct = await productService.updateProduct(id, productData);
 
             if (!updatedProduct) {
                 return res.status(404).json({
@@ -86,10 +86,10 @@ const productController = {
     },
 
     // Delete product
-    deleteProduct: (req, res) => {
+    deleteProduct: async (req, res) => {
         try {
             const { id } = req.params;
-            const deleted = productService.deleteProduct(id);
+            const deleted = await productService.deleteProduct(id);
 
             if (!deleted) {
                 return res.status(404).json({

@@ -1,21 +1,9 @@
-const { v4: uuidv4 } = require('uuid');
-
-// In-memory storage (replace with database in production)
-let invoices = [];
+const Invoice = require('../models/invoice.model');
 
 const invoiceService = {
-    // Generate invoice number
-    generateInvoiceNumber: () => {
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-        return `INV-${year}${month}-${random}`;
-    },
-
     // Create new invoice
-    createInvoice: (data) => {
-        const { clientName, clientEmail, clientAddress, items, notes, dueDate } = data;
+    createInvoice: async (data) => {
+        const { clientName, clientEmail, clientAddress, items, notes, dueDate, taxRate = 0 } = data;
 
         if (!clientName || !items || items.length === 0) {
             throw new Error('Client name and at least one item are required');
@@ -28,13 +16,14 @@ const invoiceService = {
         }));
 
         const subtotal = calculatedItems.reduce((sum, item) => sum + item.total, 0);
-        const taxRate = data.taxRate || 0;
         const taxAmount = subtotal * (taxRate / 100);
         const total = subtotal + taxAmount;
 
-        const invoice = {
-            id: uuidv4(),
-            invoiceNumber: invoiceService.generateInvoiceNumber(),
+        // Generate invoice number
+        const invoiceNumber = await Invoice.generateInvoiceNumber();
+
+        const invoice = new Invoice({
+            invoiceNumber,
             clientName,
             clientEmail: clientEmail || '',
             clientAddress: clientAddress || '',
@@ -44,39 +33,37 @@ const invoiceService = {
             taxAmount,
             total,
             notes: notes || '',
-            createdAt: new Date().toISOString(),
-            dueDate: dueDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            dueDate: dueDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             status: 'pending'
-        };
+        });
 
-        invoices.push(invoice);
+        await invoice.save();
         return invoice;
     },
 
     // Get all invoices
-    getAllInvoices: () => {
-        return invoices;
+    getAllInvoices: async () => {
+        return await Invoice.find().sort({ createdAt: -1 });
     },
 
     // Get invoice by ID
-    getInvoiceById: (id) => {
-        return invoices.find(inv => inv.id === id);
+    getInvoiceById: async (id) => {
+        return await Invoice.findById(id);
     },
 
     // Delete invoice
-    deleteInvoice: (id) => {
-        const index = invoices.findIndex(inv => inv.id === id);
-        if (index === -1) return false;
-        invoices.splice(index, 1);
-        return true;
+    deleteInvoice: async (id) => {
+        const result = await Invoice.findByIdAndDelete(id);
+        return !!result;
     },
 
     // Update invoice status
-    updateInvoiceStatus: (id, status) => {
-        const invoice = invoices.find(inv => inv.id === id);
-        if (!invoice) return null;
-        invoice.status = status;
-        return invoice;
+    updateInvoiceStatus: async (id, status) => {
+        return await Invoice.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true, runValidators: true }
+        );
     }
 };
 

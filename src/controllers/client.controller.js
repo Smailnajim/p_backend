@@ -2,10 +2,10 @@ const clientService = require('../services/client.service');
 
 const clientController = {
     // Create new client
-    createClient: (req, res) => {
+    createClient: async (req, res) => {
         try {
             const clientData = req.body;
-            const newClient = clientService.createClient(clientData);
+            const newClient = await clientService.createClient(clientData);
             res.status(201).json({
                 success: true,
                 message: 'Client created successfully',
@@ -20,9 +20,9 @@ const clientController = {
     },
 
     // Get all clients
-    getAllClients: (req, res) => {
+    getAllClients: async (req, res) => {
         try {
-            const clients = clientService.getAllClients();
+            const clients = await clientService.getAllClients();
             res.json({
                 success: true,
                 data: clients
@@ -36,10 +36,10 @@ const clientController = {
     },
 
     // Get client by ID
-    getClientById: (req, res) => {
+    getClientById: async (req, res) => {
         try {
             const { id } = req.params;
-            const client = clientService.getClientById(id);
+            const client = await clientService.getClientById(id);
             if (!client) {
                 return res.status(404).json({
                     success: false,
@@ -59,11 +59,11 @@ const clientController = {
     },
 
     // Update client
-    updateClient: (req, res) => {
+    updateClient: async (req, res) => {
         try {
             const { id } = req.params;
             const clientData = req.body;
-            const updatedClient = clientService.updateClient(id, clientData);
+            const updatedClient = await clientService.updateClient(id, clientData);
 
             if (!updatedClient) {
                 return res.status(404).json({
@@ -86,10 +86,10 @@ const clientController = {
     },
 
     // Delete client
-    deleteClient: (req, res) => {
+    deleteClient: async (req, res) => {
         try {
             const { id } = req.params;
-            const deleted = clientService.deleteClient(id);
+            const deleted = await clientService.deleteClient(id);
 
             if (!deleted) {
                 return res.status(404).json({

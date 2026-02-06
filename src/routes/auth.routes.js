@@ -8,7 +8,7 @@ router.post('/login', authController.login);
 router.get('/me', auth, authController.getMe);
 
 // Update user status
-router.patch('/status/:id', authController.updateStatus);
+router.patch('/status/:id', auth, authController.updateStatus);
 
 // Get all users
 router.get('/users', auth, authController.getAllUsers);

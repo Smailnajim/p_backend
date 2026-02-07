@@ -51,12 +51,13 @@ const invoiceController = {
                 success: true,
                 data: invoice
             });
+        } catch (error) {
             res.json({
                 success: false,
                 message: error.message
             });
         }
-        },
+    },
 
     // Generate PDF for invoice
     generateInvoicePDF: async (req, res) => {
@@ -76,12 +77,13 @@ const invoiceController = {
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `attachment; filename=invoice-${invoice.invoiceNumber}.pdf`);
             res.send(pdfBuffer);
+        } catch (error) {
             res.json({
                 success: false,
                 message: error.message
             });
         }
-        },
+    },
 
     // Delete invoice
     deleteInvoice: async (req, res) => {
@@ -100,12 +102,13 @@ const invoiceController = {
                 success: true,
                 message: 'Invoice deleted successfully'
             });
+        } catch (error) {
             res.json({
                 success: false,
                 message: error.message
             });
         }
-        },
+    },
 
     // Update invoice status
     updateInvoiceStatus: async (req, res) => {
@@ -135,13 +138,13 @@ const invoiceController = {
                 message: 'Invoice status updated successfully',
                 data: updatedInvoice
             });
+        } catch (error) {
             res.json({
                 success: false,
                 message: error.message
             });
         }
-        }
-}
+    }
 };
 
 module.exports = invoiceController;

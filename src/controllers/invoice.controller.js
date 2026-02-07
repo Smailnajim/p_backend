@@ -13,7 +13,7 @@ const invoiceController = {
                 data: newInvoice
             });
         } catch (error) {
-            res.status(400).json({
+            res.json({
                 success: false,
                 message: error.message
             });
@@ -29,7 +29,7 @@ const invoiceController = {
                 data: invoices
             });
         } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
@@ -42,7 +42,7 @@ const invoiceController = {
             const { id } = req.params;
             const invoice = await invoiceService.getInvoiceById(id);
             if (!invoice) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
                     message: 'Invoice not found'
                 });
@@ -51,13 +51,12 @@ const invoiceController = {
                 success: true,
                 data: invoice
             });
-        } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
         }
-    },
+        },
 
     // Generate PDF for invoice
     generateInvoicePDF: async (req, res) => {
@@ -66,7 +65,7 @@ const invoiceController = {
             const invoice = await invoiceService.getInvoiceById(id);
 
             if (!invoice) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
                     message: 'Invoice not found'
                 });
@@ -77,13 +76,12 @@ const invoiceController = {
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `attachment; filename=invoice-${invoice.invoiceNumber}.pdf`);
             res.send(pdfBuffer);
-        } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
         }
-    },
+        },
 
     // Delete invoice
     deleteInvoice: async (req, res) => {
@@ -92,7 +90,7 @@ const invoiceController = {
             const deleted = await invoiceService.deleteInvoice(id);
 
             if (!deleted) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
                     message: 'Invoice not found'
                 });
@@ -102,13 +100,12 @@ const invoiceController = {
                 success: true,
                 message: 'Invoice deleted successfully'
             });
-        } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
         }
-    },
+        },
 
     // Update invoice status
     updateInvoiceStatus: async (req, res) => {
@@ -118,7 +115,7 @@ const invoiceController = {
 
             const validStatuses = ['pending', 'paid', 'cancelled', 'overdue'];
             if (!validStatuses.includes(status)) {
-                return res.status(400).json({
+                return res.json({
                     success: false,
                     message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
                 });
@@ -127,7 +124,7 @@ const invoiceController = {
             const updatedInvoice = await invoiceService.updateInvoiceStatus(id, status);
 
             if (!updatedInvoice) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
                     message: 'Invoice not found'
                 });
@@ -138,13 +135,13 @@ const invoiceController = {
                 message: 'Invoice status updated successfully',
                 data: updatedInvoice
             });
-        } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
         }
-    }
+        }
+}
 };
 
 module.exports = invoiceController;

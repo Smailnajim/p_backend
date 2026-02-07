@@ -10,7 +10,7 @@ const register = async (req, res) => {
         if (error.message === 'User already exists') {
             return res.json({ success: false, message: error.message });
         }
-        res.json({ success: false, message: 'Server Error' });
+        res.json({ success: false, message: error.message });
     }
 };
 
@@ -24,7 +24,7 @@ const login = async (req, res) => {
         if (error.message === 'Invalid Credentials') {
             return res.json({ success: false, message: error.message });
         }
-        res.json({ success: false, message: 'Server Error' });
+        res.json({ success: false, message: error.message });
     }
 };
 
@@ -34,7 +34,7 @@ const getMe = async (req, res) => {
         res.json({ success: true, data: user });
     } catch (error) {
         console.error(error.message);
-        res.json({ success: false, message: 'Server Error' });
+        res.json({ success: false, message: error.message });
     }
 };
 
@@ -61,7 +61,7 @@ const getAllUsers = async (req, res) => {
         res.json({ success: true, data: users });
     } catch (error) {
         console.error(error.message);
-        res.json({ success: false, message: 'Server Error' });
+        res.json({ success: false, message: error.message });
     }
 };
 

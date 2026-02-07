@@ -6,13 +6,13 @@ const clientController = {
         try {
             const clientData = req.body;
             const newClient = await clientService.createClient(clientData);
-            res.status(201).json({
+            res.json({
                 success: true,
                 message: 'Client created successfully',
                 data: newClient
             });
         } catch (error) {
-            res.status(400).json({
+            res.json({
                 success: false,
                 message: error.message
             });
@@ -28,7 +28,7 @@ const clientController = {
                 data: clients
             });
         } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
@@ -41,7 +41,7 @@ const clientController = {
             const { id } = req.params;
             const client = await clientService.getClientById(id);
             if (!client) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
                     message: 'Client not found'
                 });
@@ -51,7 +51,7 @@ const clientController = {
                 data: client
             });
         } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
@@ -66,7 +66,7 @@ const clientController = {
             const updatedClient = await clientService.updateClient(id, clientData);
 
             if (!updatedClient) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
                     message: 'Client not found'
                 });
@@ -78,7 +78,7 @@ const clientController = {
                 data: updatedClient
             });
         } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
@@ -92,7 +92,7 @@ const clientController = {
             const deleted = await clientService.deleteClient(id);
 
             if (!deleted) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
                     message: 'Client not found'
                 });
@@ -103,7 +103,7 @@ const clientController = {
                 message: 'Client deleted successfully'
             });
         } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });

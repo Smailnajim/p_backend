@@ -7,7 +7,7 @@ const invoiceController = {
         try {
             const invoiceData = req.body;
             const newInvoice = await invoiceService.createInvoice(invoiceData);
-            res.status(201).json({
+            res.json({
                 success: true,
                 message: 'Invoice created successfully',
                 data: newInvoice

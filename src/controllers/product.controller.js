@@ -6,13 +6,13 @@ const productController = {
         try {
             const productData = req.body;
             const newProduct = await productService.createProduct(productData);
-            res.status(201).json({
+            res.json({
                 success: true,
                 message: 'Product created successfully',
                 data: newProduct
             });
         } catch (error) {
-            res.status(400).json({
+            res.json({
                 success: false,
                 message: error.message
             });
@@ -28,7 +28,7 @@ const productController = {
                 data: products
             });
         } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
@@ -41,7 +41,7 @@ const productController = {
             const { id } = req.params;
             const product = await productService.getProductById(id);
             if (!product) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
                     message: 'Product not found'
                 });
@@ -51,7 +51,7 @@ const productController = {
                 data: product
             });
         } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
@@ -66,7 +66,7 @@ const productController = {
             const updatedProduct = await productService.updateProduct(id, productData);
 
             if (!updatedProduct) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
                     message: 'Product not found'
                 });
@@ -78,7 +78,7 @@ const productController = {
                 data: updatedProduct
             });
         } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });
@@ -92,7 +92,7 @@ const productController = {
             const deleted = await productService.deleteProduct(id);
 
             if (!deleted) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
                     message: 'Product not found'
                 });
@@ -103,7 +103,7 @@ const productController = {
                 message: 'Product deleted successfully'
             });
         } catch (error) {
-            res.status(500).json({
+            res.json({
                 success: false,
                 message: error.message
             });

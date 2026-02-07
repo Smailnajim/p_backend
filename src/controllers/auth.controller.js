@@ -8,9 +8,9 @@ const register = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         if (error.message === 'User already exists') {
-            return res.status(400).json({ success: false, message: error.message });
+            return res.json({ success: false, message: error.message });
         }
-        res.status(500).json({ success: false, message: 'Server Error' });
+        res.json({ success: false, message: 'Server Error' });
     }
 };
 
@@ -22,9 +22,9 @@ const login = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         if (error.message === 'Invalid Credentials') {
-            return res.status(400).json({ success: false, message: error.message });
+            return res.json({ success: false, message: error.message });
         }
-        res.status(500).json({ success: false, message: 'Server Error' });
+        res.json({ success: false, message: 'Server Error' });
     }
 };
 
@@ -34,7 +34,7 @@ const getMe = async (req, res) => {
         res.json({ success: true, data: user });
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({ success: false, message: 'Server Error' });
+        res.json({ success: false, message: 'Server Error' });
     }
 };
 
@@ -51,7 +51,7 @@ const updateStatus = async (req, res) => {
         res.json({ success: true, data: user });
     } catch (error) {
         console.error(error.message);
-        res.status(400).json({ success: false, message: error.message });
+        res.json({ success: false, message: error.message });
     }
 };
 
@@ -61,7 +61,7 @@ const getAllUsers = async (req, res) => {
         res.json({ success: true, data: users });
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({ success: false, message: 'Server Error' });
+        res.json({ success: false, message: 'Server Error' });
     }
 };
 

@@ -48,8 +48,8 @@ const pdfService = {
                     doc.fillColor('#374151');
                     doc.text(item.description, 60, yPosition, { width: 250 });
                     doc.text(item.quantity.toString(), 320, yPosition);
-                    doc.text(`$${item.unitPrice.toFixed(2)}`, 380, yPosition);
-                    doc.text(`$${item.total.toFixed(2)}`, 480, yPosition);
+                    doc.text(`${item.unitPrice.toFixed(2)} DH`, 380, yPosition);
+                    doc.text(`${item.total.toFixed(2)} DH`, 480, yPosition);
 
                     // Row separator
                     yPosition += 25;
@@ -63,18 +63,18 @@ const pdfService = {
                 yPosition += 15;
                 doc.fontSize(10).fillColor('#6b7280');
                 doc.text('Subtotal:', 380, yPosition);
-                doc.text(`$${invoice.subtotal.toFixed(2)}`, 480, yPosition);
+                doc.text(`${invoice.subtotal.toFixed(2)} DH`, 480, yPosition);
 
                 if (invoice.taxRate > 0) {
                     yPosition += 20;
                     doc.text(`Tax (${invoice.taxRate}%):`, 380, yPosition);
-                    doc.text(`$${invoice.taxAmount.toFixed(2)}`, 480, yPosition);
+                    doc.text(`${invoice.taxAmount.toFixed(2)} DH`, 480, yPosition);
                 }
 
                 yPosition += 25;
                 doc.fontSize(14).fillColor('#2563eb').font('Helvetica-Bold');
                 doc.text('TOTAL:', 380, yPosition);
-                doc.text(`$${invoice.total.toFixed(2)}`, 480, yPosition);
+                doc.text(`${invoice.total.toFixed(2)} DH`, 480, yPosition);
 
                 // Notes Section
                 if (invoice.notes) {

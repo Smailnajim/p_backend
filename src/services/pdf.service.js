@@ -1,4 +1,5 @@
 const PDFDocument = require('pdfkit');
+const path = require('path');
 
 const pdfService = {
     generateInvoicePDF: (invoice) => {
@@ -13,8 +14,12 @@ const pdfService = {
                     resolve(pdfData);
                 });
 
+                // Logo
+                const logoPath = path.join(__dirname, '..', '..', 'logo.png');
+                doc.image(logoPath, 50, 35, { width: 60 });
+
                 // Header
-                doc.fontSize(28).fillColor('#2563eb').text('INVOICE', 50, 50);
+                doc.fontSize(28).fillColor('#2563eb').text('Touhami Decor', 120, 50);
 
                 // Invoice Info
                 doc.fontSize(10).fillColor('#374151');

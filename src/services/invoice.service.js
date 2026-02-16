@@ -6,7 +6,7 @@ const invoiceService = {
         const { clientName, clientEmail, clientAddress, items, notes, dueDate, taxRate = 0 } = data;
 
         if (!clientName || !items || items.length === 0) {
-            throw new Error('Client name and at least one item are required');
+            throw new Error('Le nom du client et au moins un article sont requis');
         }
 
         // Calculate totals

@@ -8,7 +8,7 @@ const clientController = {
             const newClient = await clientService.createClient(clientData);
             res.json({
                 success: true,
-                message: 'Client created successfully',
+                message: 'Client créé avec succès',
                 data: newClient
             });
         } catch (error) {
@@ -43,7 +43,7 @@ const clientController = {
             if (!client) {
                 return res.json({
                     success: false,
-                    message: 'Client not found'
+                    message: 'Client non trouvé'
                 });
             }
             res.json({
@@ -68,13 +68,13 @@ const clientController = {
             if (!updatedClient) {
                 return res.json({
                     success: false,
-                    message: 'Client not found'
+                    message: 'Client non trouvé'
                 });
             }
 
             res.json({
                 success: true,
-                message: 'Client updated successfully',
+                message: 'Client mis à jour avec succès',
                 data: updatedClient
             });
         } catch (error) {
@@ -94,13 +94,13 @@ const clientController = {
             if (!deleted) {
                 return res.json({
                     success: false,
-                    message: 'Client not found'
+                    message: 'Client non trouvé'
                 });
             }
 
             res.json({
                 success: true,
-                message: 'Client deleted successfully'
+                message: 'Client supprimé avec succès'
             });
         } catch (error) {
             res.json({

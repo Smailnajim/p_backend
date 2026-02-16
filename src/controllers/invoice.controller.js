@@ -9,7 +9,7 @@ const invoiceController = {
             const newInvoice = await invoiceService.createInvoice(invoiceData);
             res.json({
                 success: true,
-                message: 'Invoice created successfully',
+                message: 'Facture créée avec succès',
                 data: newInvoice
             });
         } catch (error) {
@@ -44,7 +44,7 @@ const invoiceController = {
             if (!invoice) {
                 return res.json({
                     success: false,
-                    message: 'Invoice not found'
+                    message: 'Facture non trouvée'
                 });
             }
             res.json({
@@ -68,7 +68,7 @@ const invoiceController = {
             if (!invoice) {
                 return res.json({
                     success: false,
-                    message: 'Invoice not found'
+                    message: 'Facture non trouvée'
                 });
             }
 
@@ -94,13 +94,13 @@ const invoiceController = {
             if (!deleted) {
                 return res.json({
                     success: false,
-                    message: 'Invoice not found'
+                    message: 'Facture non trouvée'
                 });
             }
 
             res.json({
                 success: true,
-                message: 'Invoice deleted successfully'
+                message: 'Facture supprimée avec succès'
             });
         } catch (error) {
             res.json({
@@ -120,7 +120,7 @@ const invoiceController = {
             if (!validStatuses.includes(status)) {
                 return res.json({
                     success: false,
-                    message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+                    message: `Statut invalide. Doit être l'un des suivants : ${validStatuses.join(', ')}`
                 });
             }
 
@@ -129,13 +129,13 @@ const invoiceController = {
             if (!updatedInvoice) {
                 return res.json({
                     success: false,
-                    message: 'Invoice not found'
+                    message: 'Facture non trouvée'
                 });
             }
 
             res.json({
                 success: true,
-                message: 'Invoice status updated successfully',
+                message: 'Statut de la facture mis à jour avec succès',
                 data: updatedInvoice
             });
         } catch (error) {

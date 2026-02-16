@@ -8,7 +8,7 @@ const productController = {
             const newProduct = await productService.createProduct(productData);
             res.json({
                 success: true,
-                message: 'Product created successfully',
+                message: 'Produit créé avec succès',
                 data: newProduct
             });
         } catch (error) {
@@ -43,7 +43,7 @@ const productController = {
             if (!product) {
                 return res.json({
                     success: false,
-                    message: 'Product not found'
+                    message: 'Produit non trouvé'
                 });
             }
             res.json({
@@ -68,13 +68,13 @@ const productController = {
             if (!updatedProduct) {
                 return res.json({
                     success: false,
-                    message: 'Product not found'
+                    message: 'Produit non trouvé'
                 });
             }
 
             res.json({
                 success: true,
-                message: 'Product updated successfully',
+                message: 'Produit mis à jour avec succès',
                 data: updatedProduct
             });
         } catch (error) {
@@ -94,13 +94,13 @@ const productController = {
             if (!deleted) {
                 return res.json({
                     success: false,
-                    message: 'Product not found'
+                    message: 'Produit non trouvé'
                 });
             }
 
             res.json({
                 success: true,
-                message: 'Product deleted successfully'
+                message: 'Produit supprimé avec succès'
             });
         } catch (error) {
             res.json({

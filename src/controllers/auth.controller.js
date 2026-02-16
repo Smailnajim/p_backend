@@ -7,7 +7,7 @@ const register = async (req, res) => {
         res.json({ success: true, ...result });
     } catch (error) {
         console.error(error.message);
-        if (error.message === 'User already exists') {
+        if (error.message === 'L\'utilisateur existe déjà') {
             return res.json({ success: false, message: error.message });
         }
         res.json({ success: false, message: error.message });
@@ -21,7 +21,7 @@ const login = async (req, res) => {
         res.json({ success: true, ...result });
     } catch (error) {
         console.error(error.message);
-        if (error.message === 'Invalid Credentials') {
+        if (error.message === 'Identifiants invalides') {
             return res.json({ success: false, message: error.message });
         }
         res.json({ success: false, message: error.message });

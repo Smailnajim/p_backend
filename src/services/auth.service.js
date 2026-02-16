@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const registerUser = async (name, email, password) => {
     let user = await User.findOne({ email });
     if (user) {
-        throw new Error('User already exists');
+        throw new Error('L\'utilisateur existe déjà');
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -37,16 +37,16 @@ const registerUser = async (name, email, password) => {
 const loginUser = async (email, password) => {
     let user = await User.findOne({ email });
     if (!user) {
-        throw new Error('Invalid Credentials');
+        throw new Error('Identifiants invalides');
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        throw new Error('Invalid Credentials');
+        throw new Error('Identifiants invalides');
     }
 
     if (user.status !== 'allowed') {
-        throw new Error('Account blocked. Please wait for approval.');
+        throw new Error('Compte bloqué. Veuillez attendre l\'approbation.');
     }
 
     const payload = {
@@ -67,14 +67,14 @@ const loginUser = async (email, password) => {
 const getUserById = async (userId) => {
     const user = await User.findById(userId).select('-password');
     if (!user) {
-        throw new Error('User not found');
+        throw new Error('Utilisateur non trouvé');
     }
     return user;
 };
 
 const updateUserStatus = async (userId, status) => {
     if (!['blocked', 'allowed'].includes(status)) {
-        throw new Error('Invalid status');
+        throw new Error('Statut invalide');
     }
 
     const user = await User.findByIdAndUpdate(
@@ -84,7 +84,7 @@ const updateUserStatus = async (userId, status) => {
     ).select('-password');
 
     if (!user) {
-        throw new Error('User not found');
+        throw new Error('Utilisateur non trouvé');
     }
     return user;
 };

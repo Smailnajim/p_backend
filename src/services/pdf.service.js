@@ -23,15 +23,15 @@ const pdfService = {
 
                 // Invoice Info
                 doc.fontSize(10).fillColor('#374151');
-                doc.text(`Invoice Number: ${invoice.invoiceNumber}`, 400, 50, { align: 'right' });
-                doc.text(`Date: ${new Date(invoice.createdAt).toLocaleDateString()}`, 400, 65, { align: 'right' });
-                doc.text(`Due Date: ${new Date(invoice.dueDate).toLocaleDateString()}`, 400, 80, { align: 'right' });
+                doc.text(`Numéro de facture : ${invoice.invoiceNumber}`, 400, 50, { align: 'right' });
+                doc.text(`Date : ${new Date(invoice.createdAt).toLocaleDateString('fr-FR')}`, 400, 65, { align: 'right' });
+                doc.text(`Date d'échéance : ${new Date(invoice.dueDate).toLocaleDateString('fr-FR')}`, 400, 80, { align: 'right' });
 
                 // Divider
                 doc.moveTo(50, 110).lineTo(550, 110).strokeColor('#e5e7eb').stroke();
 
                 // Bill To Section
-                doc.fontSize(12).fillColor('#2563eb').text('BILL TO:', 50, 130);
+                doc.fontSize(12).fillColor('#2563eb').text('FACTURER À :', 50, 130);
                 doc.fontSize(11).fillColor('#374151');
                 doc.text(invoice.clientName, 50, 150);
                 if (invoice.clientEmail) doc.text(invoice.clientEmail, 50, 165);
@@ -43,8 +43,8 @@ const pdfService = {
 
                 doc.fontSize(10).fillColor('#374151');
                 doc.text('DESCRIPTION', 60, tableTop + 8);
-                doc.text('QTY', 320, tableTop + 8);
-                doc.text('UNIT PRICE', 380, tableTop + 8);
+                doc.text('QTÉ', 320, tableTop + 8);
+                doc.text('PRIX UNITAIRE', 380, tableTop + 8);
                 doc.text('TOTAL', 480, tableTop + 8);
 
                 // Items
@@ -67,32 +67,32 @@ const pdfService = {
 
                 yPosition += 15;
                 doc.fontSize(10).fillColor('#6b7280');
-                doc.text('Subtotal:', 380, yPosition);
+                doc.text('Sous-total :', 380, yPosition);
                 doc.text(`${invoice.subtotal.toFixed(2)} DH`, 480, yPosition);
 
                 if (invoice.taxRate > 0) {
                     yPosition += 20;
-                    doc.text(`Tax (${invoice.taxRate}%):`, 380, yPosition);
+                    doc.text(`TVA (${invoice.taxRate}%) :`, 380, yPosition);
                     doc.text(`${invoice.taxAmount.toFixed(2)} DH`, 480, yPosition);
                 }
 
                 yPosition += 25;
                 doc.fontSize(14).fillColor('#2563eb').font('Helvetica-Bold');
-                doc.text('TOTAL:', 380, yPosition);
+                doc.text('TOTAL :', 380, yPosition);
                 doc.text(`${invoice.total.toFixed(2)} DH`, 480, yPosition);
 
                 // Notes Section
                 if (invoice.notes) {
                     yPosition += 50;
                     doc.fontSize(10).fillColor('#6b7280').font('Helvetica');
-                    doc.text('NOTES:', 50, yPosition);
+                    doc.text('NOTES :', 50, yPosition);
                     doc.fontSize(9).fillColor('#374151');
                     doc.text(invoice.notes, 50, yPosition + 15, { width: 300 });
                 }
 
                 // Footer
                 doc.fontSize(8).fillColor('#9ca3af');
-                doc.text('Thank you for your business!', 50, 750, { align: 'center', width: 500 });
+                doc.text('Merci de votre confiance !', 50, 750, { align: 'center', width: 500 });
 
                 doc.end();
             } catch (error) {

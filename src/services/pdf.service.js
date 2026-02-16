@@ -5,7 +5,7 @@ const pdfService = {
     generateInvoicePDF: (invoice) => {
         return new Promise((resolve, reject) => {
             try {
-                const doc = new PDFDocument({ margin: 50 });
+                const doc = new PDFDocument({ margin: 50, size: 'A4' });
                 const buffers = [];
 
                 doc.on('data', buffers.push.bind(buffers));
@@ -14,85 +14,155 @@ const pdfService = {
                     resolve(pdfData);
                 });
 
-                // Logo
+                // Colors Configuration
+                const Colors = {
+                    primary: '#2563eb', // Blue
+                    secondary: '#64748b', // Slate
+                    text: '#1e293b', // Dark Slate
+                    background: '#f8fafc', // Very light blue/gray
+                    white: '#ffffff',
+                    border: '#e2e8f0'
+                };
+
+                // --- Header Background ---
+                doc.rect(0, 0, doc.page.width, 160).fill(Colors.background);
+
+                // --- Logo & Company Info ---
                 const logoPath = path.join(__dirname, '..', '..', 'logo.png');
-                doc.image(logoPath, 50, 35, { width: 60 });
 
-                // Header
-                doc.fontSize(28).fillColor('#2563eb').text('Touhami Decor', 120, 50);
+                try {
+                    // Attempt to load logo if it exists
+                    doc.image(logoPath, 50, 40, { width: 60 });
+                } catch (e) {
+                    console.warn('Logo file not found, skipping logo rendering.');
+                }
 
-                // Invoice Info
-                doc.fontSize(10).fillColor('#374151');
-                doc.text(`Numéro de facture : ${invoice.invoiceNumber}`, 400, 50, { align: 'right' });
-                doc.text(`Date : ${new Date(invoice.createdAt).toLocaleDateString('fr-FR')}`, 400, 65, { align: 'right' });
-                doc.text(`Date d'échéance : ${new Date(invoice.dueDate).toLocaleDateString('fr-FR')}`, 400, 80, { align: 'right' });
+                doc.fontSize(20).fillColor(Colors.primary).font('Helvetica-Bold')
+                    .text('TOUHAMI DECORE', 120, 50);
 
-                // Divider
-                doc.moveTo(50, 110).lineTo(550, 110).strokeColor('#e5e7eb').stroke();
+                doc.fontSize(10).fillColor(Colors.secondary).font('Helvetica')
+                    .text('Interior Design & Decoration', 120, 75)
+                    .text('contact@touhamidecore.com', 120, 90);
 
-                // Bill To Section
-                doc.fontSize(12).fillColor('#2563eb').text('FACTURER À :', 50, 130);
-                doc.fontSize(11).fillColor('#374151');
-                doc.text(invoice.clientName, 50, 150);
-                if (invoice.clientEmail) doc.text(invoice.clientEmail, 50, 165);
-                if (invoice.clientAddress) doc.text(invoice.clientAddress, 50, 180, { width: 200 });
+                // --- Invoice Details (Top Right) ---
+                // We use a fixed width container aligned to the right margin (595 - 50 = 545)
+                // Box starts at X=345, width=200
+                const rightColX = 345;
+                const rightColWidth = 200;
 
-                // Items Table Header
-                const tableTop = 240;
-                doc.fillColor('#f3f4f6').rect(50, tableTop, 500, 25).fill();
+                doc.fontSize(10).fillColor(Colors.secondary).font('Helvetica-Bold')
+                    .text('FACTURE', rightColX, 50, { align: 'right', width: rightColWidth });
 
-                doc.fontSize(10).fillColor('#374151');
-                doc.text('DESCRIPTION', 60, tableTop + 8);
-                doc.text('QTÉ', 320, tableTop + 8);
-                doc.text('PRIX UNITAIRE', 380, tableTop + 8);
-                doc.text('TOTAL', 480, tableTop + 8);
+                doc.fontSize(10).font('Helvetica')
+                    .text(`# ${invoice.invoiceNumber}`, rightColX, 65, { align: 'right', width: rightColWidth });
 
-                // Items
-                let yPosition = tableTop + 35;
-                invoice.items.forEach((item, index) => {
-                    doc.fillColor('#374151');
-                    doc.text(item.description, 60, yPosition, { width: 250 });
-                    doc.text(item.quantity.toString(), 320, yPosition);
-                    doc.text(`${item.unitPrice.toFixed(2)} DH`, 380, yPosition);
-                    doc.text(`${item.total.toFixed(2)} DH`, 480, yPosition);
+                // Date
+                const dateY = 85;
+                doc.text(`Date: ${new Date(invoice.createdAt).toLocaleDateString('fr-FR')}`, rightColX, 85, { align: 'right', width: rightColWidth });
+                doc.text(`Échéance: ${new Date(invoice.dueDate).toLocaleDateString('fr-FR')}`, rightColX, 100, { align: 'right', width: rightColWidth });
 
-                    // Row separator
-                    yPosition += 25;
-                    doc.moveTo(50, yPosition - 5).lineTo(550, yPosition - 5).strokeColor('#e5e7eb').stroke();
+
+                // --- Client Info (Bill To) ---
+                const billToTop = 190;
+                doc.fontSize(10).fillColor(Colors.secondary).font('Helvetica-Bold')
+                    .text('FACTURER À', 50, billToTop);
+
+                doc.fontSize(10).fillColor(Colors.text).font('Helvetica')
+                    .text(invoice.clientName, 50, billToTop + 15);
+
+                if (invoice.clientEmail) {
+                    doc.fillColor(Colors.secondary).text(invoice.clientEmail, 50, billToTop + 30);
+                }
+                if (invoice.clientAddress) {
+                    doc.text(invoice.clientAddress, 50, billToTop + 45, { width: 250 });
+                }
+
+                // --- Items Table ---
+                const tableTop = 280;
+                const itemX = 50;
+                const qtyX = 350;
+                const priceX = 420;
+                const totalX = 500;
+
+                // Headers
+                doc.rect(50, tableTop, 500, 25).fill(Colors.primary);
+                doc.fillColor(Colors.white).font('Helvetica-Bold').fontSize(9);
+                doc.text('DESCRIPTION', itemX + 10, tableTop + 8);
+                doc.text('QTÉ', qtyX, tableTop + 8, { width: 40, align: 'center' });
+                doc.text('PRIX UNIT.', priceX, tableTop + 8, { width: 60, align: 'right' });
+                doc.text('TOTAL', totalX, tableTop + 8, { width: 50, align: 'right' });
+
+                // Rows
+                let y = tableTop + 35;
+                doc.font('Helvetica').fontSize(9).fillColor(Colors.text);
+
+                invoice.items.forEach((item, i) => {
+                    const rowHeight = 25;
+                    // Zebra striping
+                    if (i % 2 === 0) {
+                        doc.rect(50, y - 5, 500, rowHeight).fill(Colors.background);
+                    }
+
+                    doc.fillColor(Colors.text);
+                    doc.text(item.description, itemX + 10, y, { width: 280 });
+                    doc.text(item.quantity.toString(), qtyX, y, { width: 40, align: 'center' });
+                    doc.text(item.unitPrice.toFixed(2), priceX, y, { width: 60, align: 'right' });
+
+                    // Improved Currency formatting: Bold amount, normal currency symbol
+                    doc.text(`${item.total.toFixed(2)} DH`, totalX, y, { width: 50, align: 'right' });
+
+                    y += rowHeight;
                 });
 
-                // Totals Section
-                yPosition += 20;
-                doc.moveTo(350, yPosition).lineTo(550, yPosition).strokeColor('#e5e7eb').stroke();
+                // Line separator
+                doc.moveTo(50, y + 10).lineTo(550, y + 10).strokeColor(Colors.border).stroke();
 
-                yPosition += 15;
-                doc.fontSize(10).fillColor('#6b7280');
-                doc.text('Sous-total :', 380, yPosition);
-                doc.text(`${invoice.subtotal.toFixed(2)} DH`, 480, yPosition);
+                // --- Totals ---
+                y += 20;
+                const totalsLabelX = 350;
+                const totalsValueX = 500; // Alignment point for values
+
+                doc.font('Helvetica').fontSize(10).fillColor(Colors.secondary);
+
+                doc.text('Sous-total', totalsLabelX, y, { align: 'right', width: 100 });
+                doc.text(`${invoice.subtotal.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
 
                 if (invoice.taxRate > 0) {
-                    yPosition += 20;
-                    doc.text(`TVA (${invoice.taxRate}%) :`, 380, yPosition);
-                    doc.text(`${invoice.taxAmount.toFixed(2)} DH`, 480, yPosition);
+                    y += 15;
+                    doc.text(`TVA (${invoice.taxRate}%)`, totalsLabelX, y, { align: 'right', width: 100 });
+                    doc.text(`${invoice.taxAmount.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
                 }
 
-                yPosition += 25;
-                doc.fontSize(14).fillColor('#2563eb').font('Helvetica-Bold');
-                doc.text('TOTAL :', 380, yPosition);
-                doc.text(`${invoice.total.toFixed(2)} DH`, 480, yPosition);
+                y += 15; // Spacing
 
-                // Notes Section
+                // Total Highlight Box
+                doc.rect(totalsLabelX, y, 200, 25).fill(Colors.primary);
+                doc.fillColor(Colors.white).font('Helvetica-Bold').fontSize(11);
+                doc.text('TOTAL À PAYER', totalsLabelX + 10, y + 7);
+                // Ensure there is enough width for total + DH
+                doc.text(`${invoice.total.toFixed(2)} DH`, totalsValueX - 30, y + 7, { align: 'right', width: 80 });
+
+                // --- Notes Section ---
                 if (invoice.notes) {
-                    yPosition += 50;
-                    doc.fontSize(10).fillColor('#6b7280').font('Helvetica');
-                    doc.text('NOTES :', 50, yPosition);
-                    doc.fontSize(9).fillColor('#374151');
-                    doc.text(invoice.notes, 50, yPosition + 15, { width: 300 });
+                    y += 40;
+                    if (y > 700) { // Check if we need a new page for notes
+                        doc.addPage();
+                        y = 50;
+                    }
+                    doc.fontSize(10).fillColor(Colors.secondary).font('Helvetica-Bold');
+                    doc.text('NOTES :', 50, y);
+                    doc.fontSize(9).fillColor(Colors.text).font('Helvetica');
+                    doc.text(invoice.notes, 50, y + 15, { width: 300 });
                 }
 
-                // Footer
-                doc.fontSize(8).fillColor('#9ca3af');
-                doc.text('Merci de votre confiance !', 50, 750, { align: 'center', width: 500 });
+                // --- Footer ---
+                const footerY = 750;
+                doc.moveTo(50, footerY).lineTo(550, footerY).strokeColor(Colors.border).stroke();
+
+                doc.font('Helvetica').fontSize(8).fillColor(Colors.secondary).text(
+                    'Merci de votre confiance. Pour toute question, veuillez nous contacter.',
+                    50, footerY + 10, { align: 'center', width: 500 }
+                );
 
                 doc.end();
             } catch (error) {

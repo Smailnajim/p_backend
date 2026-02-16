@@ -128,12 +128,12 @@ const pdfService = {
                 doc.text(`${invoice.subtotal.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
 
                 if (invoice.taxRate > 0) {
-                    y += 15;
+                    y += 30; // Increased spacing for TVA as well
                     doc.text(`TVA (${invoice.taxRate}%)`, totalsLabelX, y, { align: 'right', width: 100 });
                     doc.text(`${invoice.taxAmount.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
                 }
 
-                y += 15; // Spacing
+                y += 40; // Increased spacing
 
                 // Total Highlight Box
                 doc.rect(totalsLabelX, y, 200, 25).fill(Colors.primary);

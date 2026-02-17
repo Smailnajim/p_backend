@@ -96,9 +96,20 @@ invoiceSchema.statics.generateInvoiceNumber = async function () {
     const date = new Date();
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
-    const count = await this.countDocuments();
-    const number = String(count + 1).padStart(4, '0');
-    return `INV-${year}${month}-${number}`;
+    const prefix = `INV-${year}${month}-`;
+
+    // Find the last invoice with this prefix, sorted by invoiceNumber descending
+    const lastInvoice = await this.findOne({
+        invoiceNumber: { $regex: `^${prefix}` }
+    }).sort({ invoiceNumber: -1 });
+
+    let nextNumber = 1;
+    if (lastInvoice) {
+        const lastNumber = parseInt(lastInvoice.invoiceNumber.split('-').pop(), 10);
+        nextNumber = lastNumber + 1;
+    }
+
+    return `${prefix}${String(nextNumber).padStart(4, '0')}`;
 };
 
 module.exports = mongoose.model('Invoice', invoiceSchema);

@@ -16,7 +16,7 @@ const pdfService = {
 
                 // Colors Configuration
                 const Colors = {
-                    primary: '#2563eb', // Blue
+                    primary: '#d4af37', // Metallic Gold
                     secondary: '#64748b', // Slate
                     text: '#1e293b', // Dark Slate
                     background: '#f8fafc', // Very light blue/gray
@@ -37,12 +37,12 @@ const pdfService = {
                     console.warn('Logo file not found, skipping logo rendering.');
                 }
 
-                doc.fontSize(20).fillColor(Colors.primary).font('Helvetica-Bold')
-                    .text('TOUHAMI DECORE', 120, 50);
+                doc.fontSize(16).fillColor(Colors.primary).font('Helvetica-Bold')
+                    .text('TOUHAMI DECOR', 120, 50);
 
                 doc.fontSize(10).fillColor(Colors.secondary).font('Helvetica')
                     .text('Interior Design & Decoration', 120, 75)
-                    .text('youssefnajim2000@gmail.com', 120, 90);
+                    .text('ynajim22@gmail.com', 120, 90);
 
                 // --- Invoice Details (Top Right) ---
                 // We use a fixed width container aligned to the right margin (595 - 50 = 545)
@@ -83,18 +83,33 @@ const pdfService = {
 
 
                 // --- Client Info (Bill To) ---
-                const billToTop = 190;
-                doc.fontSize(10).fillColor(Colors.secondary).font('Helvetica-Bold')
+                const billToTop = 180;
+
+                // Section title with underline
+                doc.fontSize(10).fillColor(Colors.primary).font('Helvetica-Bold')
                     .text('FACTURER À', 50, billToTop);
+                doc.moveTo(50, billToTop + 16).lineTo(200, billToTop + 16)
+                    .strokeColor(Colors.primary).lineWidth(1.5).stroke();
 
-                doc.fontSize(10).fillColor(Colors.text).font('Helvetica')
-                    .text(invoice.clientName, 50, billToTop + 15);
+                // Client name
+                let infoY = billToTop + 24;
+                doc.fontSize(11).fillColor(Colors.text).font('Helvetica-Bold')
+                    .text(invoice.clientName, 50, infoY);
+                infoY += 18;
 
+                // Email
                 if (invoice.clientEmail) {
-                    doc.fillColor(Colors.secondary).text(invoice.clientEmail, 50, billToTop + 30);
+                    doc.fontSize(9).font('Helvetica')
+                        .fillColor(Colors.secondary).text('Email: ', 50, infoY, { continued: true })
+                        .fillColor(Colors.text).text(invoice.clientEmail);
+                    infoY += 15;
                 }
+
+                // Address
                 if (invoice.clientAddress) {
-                    doc.text(invoice.clientAddress, 50, billToTop + 45, { width: 250 });
+                    doc.fontSize(9).font('Helvetica')
+                        .fillColor(Colors.secondary).text('Adresse: ', 50, infoY, { continued: true })
+                        .fillColor(Colors.text).text(invoice.clientAddress, { width: 250 });
                 }
 
                 // --- Items Table ---

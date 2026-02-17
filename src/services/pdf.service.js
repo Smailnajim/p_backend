@@ -42,7 +42,7 @@ const pdfService = {
 
                 doc.fontSize(10).fillColor(Colors.secondary).font('Helvetica')
                     .text('Interior Design & Decoration', 120, 75)
-                    .text('contact@touhamidecore.com', 120, 90);
+                    .text('youssefnajim2000@gmail.com', 120, 90);
 
                 // --- Invoice Details (Top Right) ---
                 // We use a fixed width container aligned to the right margin (595 - 50 = 545)
@@ -60,6 +60,26 @@ const pdfService = {
                 const dateY = 85;
                 doc.text(`Date: ${new Date(invoice.createdAt).toLocaleDateString('fr-FR')}`, rightColX, 85, { align: 'right', width: rightColWidth });
                 doc.text(`Échéance: ${new Date(invoice.dueDate).toLocaleDateString('fr-FR')}`, rightColX, 100, { align: 'right', width: rightColWidth });
+
+                // --- Status Badge ---
+                const statusConfig = {
+                    pending: { label: 'En attente', color: '#f59e0b', bgColor: '#fef3c7' },
+                    paid: { label: 'Payé', color: '#10b981', bgColor: '#d1fae5' },
+                    overdue: { label: 'En retard', color: '#ef4444', bgColor: '#fee2e2' },
+                    cancelled: { label: 'Annulé', color: '#6b7280', bgColor: '#f3f4f6' }
+                };
+                const currentStatus = statusConfig[invoice.status] || statusConfig.pending;
+                const statusLabel = `Statut: ${currentStatus.label}`;
+                const statusY = 118;
+                const statusTextWidth = doc.font('Helvetica-Bold').fontSize(9).widthOfString(statusLabel);
+                const statusBadgeWidth = statusTextWidth + 16;
+                const statusBadgeX = rightColX + rightColWidth - statusBadgeWidth;
+
+                // Badge background
+                doc.roundedRect(statusBadgeX, statusY - 2, statusBadgeWidth, 18, 4).fill(currentStatus.bgColor);
+                // Badge text
+                doc.font('Helvetica-Bold').fontSize(9).fillColor(currentStatus.color)
+                    .text(statusLabel, statusBadgeX + 8, statusY + 2);
 
 
                 // --- Client Info (Bill To) ---

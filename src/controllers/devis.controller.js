@@ -163,6 +163,20 @@ const devisController = {
                 message: error.message
             });
         }
+    },
+
+    // Update full devis
+    updateDevis: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const updatedDevis = await devisService.updateDevis(id, req.body);
+            if (!updatedDevis) {
+                return res.json({ success: false, message: 'Devis non trouvé' });
+            }
+            res.json({ success: true, message: 'Devis mis à jour avec succès', data: updatedDevis });
+        } catch (error) {
+            res.json({ success: false, message: error.message });
+        }
     }
 };
 

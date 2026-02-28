@@ -18,6 +18,9 @@ router.get('/:id/pdf', auth, devisController.generateDevisPDF);
 // Update devis status
 router.patch('/:id/status', auth, devisController.updateDevisStatus);
 
+// Update full devis
+router.put('/:id', auth, devisController.updateDevis);
+
 // Convert devis to invoice
 router.post('/:id/convert', auth, devisController.convertToInvoice);
 

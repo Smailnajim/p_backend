@@ -144,6 +144,20 @@ const invoiceController = {
                 message: error.message
             });
         }
+    },
+
+    // Update full invoice
+    updateInvoice: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const updatedInvoice = await invoiceService.updateInvoice(id, req.body);
+            if (!updatedInvoice) {
+                return res.json({ success: false, message: 'Facture non trouvée' });
+            }
+            res.json({ success: true, message: 'Facture mise à jour avec succès', data: updatedInvoice });
+        } catch (error) {
+            res.json({ success: false, message: error.message });
+        }
     }
 };
 

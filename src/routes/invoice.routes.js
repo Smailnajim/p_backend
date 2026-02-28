@@ -18,6 +18,9 @@ router.get('/:id/pdf', auth, invoiceController.generateInvoicePDF);
 // Update invoice status
 router.patch('/:id/status', auth, invoiceController.updateInvoiceStatus);
 
+// Update full invoice
+router.put('/:id', auth, invoiceController.updateInvoice);
+
 // Delete invoice
 router.delete('/:id', auth, invoiceController.deleteInvoice);
 

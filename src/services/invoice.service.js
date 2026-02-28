@@ -64,6 +64,34 @@ const invoiceService = {
             { status },
             { new: true, runValidators: true }
         );
+    },
+
+    // Update full invoice
+    updateInvoice: async (id, data) => {
+        const { clientName, clientEmail, clientAddress, items, notes, dueDate, taxRate = 0 } = data;
+
+        if (!clientName || !items || items.length === 0) {
+            throw new Error('Le nom du client et au moins un article sont requis');
+        }
+
+        const calculatedItems = items.map(item => ({
+            ...item,
+            total: item.quantity * item.unitPrice
+        }));
+
+        const subtotal = calculatedItems.reduce((sum, item) => sum + item.total, 0);
+        const taxAmount = subtotal * (taxRate / 100);
+        const total = subtotal + taxAmount;
+
+        return await Invoice.findByIdAndUpdate(
+            id,
+            {
+                clientName, clientEmail: clientEmail || '', clientAddress: clientAddress || '',
+                items: calculatedItems, subtotal, taxRate, taxAmount, total,
+                notes: notes || '', dueDate: dueDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+            },
+            { new: true }
+        );
     }
 };
 

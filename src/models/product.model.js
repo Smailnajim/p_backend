@@ -24,6 +24,15 @@ const productSchema = new mongoose.Schema({
         type: String,
         enum: ['product', 'service'],
         default: 'product'
+    },
+    fournisseur: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Fournisseur',
+        default: null
+    },
+    paiementEffectue: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

@@ -42,7 +42,7 @@ const pdfService = {
 
                 doc.fontSize(10).fillColor(Colors.secondary).font('Helvetica')
                     .text('Interior Design & Decoration', 120, 75)
-                    .text('ynajim22@gmail.com', 120, 90);
+                    .text('touhamidecor@gmail.com', 120, 90);
 
                 // --- Invoice Details (Top Right) ---
                 // We use a fixed width container aligned to the right margin (595 - 50 = 545)
@@ -243,7 +243,7 @@ const pdfService = {
 
                 doc.fontSize(10).fillColor(Colors.secondary).font('Helvetica')
                     .text('Interior Design & Decoration', 120, 75)
-                    .text('ynajim22@gmail.com', 120, 90);
+                    .text('touhamidecor@gmail.com', 120, 90);
 
                 // --- Devis Details (Top Right) ---
                 const rightColX = 345;

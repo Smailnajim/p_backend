@@ -10,12 +10,12 @@ const productService = {
 
     // Get all products
     getAllProducts: async () => {
-        return await Product.find().sort({ createdAt: -1 });
+        return await Product.find().populate('fournisseur').sort({ createdAt: -1 });
     },
 
     // Get product by ID
     getProductById: async (id) => {
-        return await Product.findById(id);
+        return await Product.findById(id).populate('fournisseur');
     },
 
     // Update product

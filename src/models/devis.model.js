@@ -47,6 +47,16 @@ const devisSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    remise: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    remiseType: {
+        type: String,
+        enum: ['%', 'dh'],
+        default: '%'
+    },
     taxRate: {
         type: Number,
         default: 0,

@@ -4,7 +4,7 @@ const Invoice = require('../models/invoice.model');
 const devisService = {
     // Create new devis
     createDevis: async (data) => {
-        const { clientName, clientEmail, clientAddress, items, notes, validUntil, taxRate = 0 } = data;
+        const { clientName, clientEmail, clientAddress, items, notes, validUntil, taxRate = 0, remise = 0, remiseType = '%' } = data;
 
         if (!clientName || !items || items.length === 0) {
             throw new Error('Le nom du client et au moins un article sont requis');
@@ -16,8 +16,16 @@ const devisService = {
         }));
 
         const subtotal = calculatedItems.reduce((sum, item) => sum + item.total, 0);
-        const taxAmount = subtotal * (taxRate / 100);
-        const total = subtotal + taxAmount;
+
+        let subtotalAfterRemise = subtotal;
+        if (remiseType === '%') {
+            subtotalAfterRemise = subtotal - (subtotal * (remise / 100));
+        } else if (remiseType === 'dh') {
+            subtotalAfterRemise = Math.max(0, subtotal - remise);
+        }
+
+        const taxAmount = subtotalAfterRemise * (taxRate / 100);
+        const total = subtotalAfterRemise + taxAmount;
 
         const devisNumber = await Devis.generateDevisNumber();
 
@@ -28,6 +36,8 @@ const devisService = {
             clientAddress: clientAddress || '',
             items: calculatedItems,
             subtotal,
+            remise,
+            remiseType,
             taxRate,
             taxAmount,
             total,
@@ -67,7 +77,7 @@ const devisService = {
 
     // Update full devis
     updateDevis: async (id, data) => {
-        const { clientName, clientEmail, clientAddress, items, notes, validUntil, taxRate = 0 } = data;
+        const { clientName, clientEmail, clientAddress, items, notes, validUntil, taxRate = 0, remise = 0, remiseType = '%' } = data;
 
         if (!clientName || !items || items.length === 0) {
             throw new Error('Le nom du client et au moins un article sont requis');
@@ -79,14 +89,21 @@ const devisService = {
         }));
 
         const subtotal = calculatedItems.reduce((sum, item) => sum + item.total, 0);
-        const taxAmount = subtotal * (taxRate / 100);
-        const total = subtotal + taxAmount;
+        let subtotalAfterRemise = subtotal;
+        if (remiseType === '%') {
+            subtotalAfterRemise = subtotal - (subtotal * (remise / 100));
+        } else if (remiseType === 'dh') {
+            subtotalAfterRemise = Math.max(0, subtotal - remise);
+        }
+
+        const taxAmount = subtotalAfterRemise * (taxRate / 100);
+        const total = subtotalAfterRemise + taxAmount;
 
         return await Devis.findByIdAndUpdate(
             id,
             {
                 clientName, clientEmail: clientEmail || '', clientAddress: clientAddress || '',
-                items: calculatedItems, subtotal, taxRate, taxAmount, total,
+                items: calculatedItems, subtotal, remise, remiseType, taxRate, taxAmount, total,
                 notes: notes || '', validUntil: validUntil || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
             },
             { new: true }
@@ -113,6 +130,8 @@ const devisService = {
             clientAddress: devis.clientAddress,
             items: devis.items,
             subtotal: devis.subtotal,
+            remise: devis.remise,
+            remiseType: devis.remiseType,
             taxRate: devis.taxRate,
             taxAmount: devis.taxAmount,
             total: devis.total,

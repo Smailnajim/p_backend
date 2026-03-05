@@ -162,8 +162,16 @@ const pdfService = {
                 doc.text('Sous-total', totalsLabelX, y, { align: 'right', width: 100 });
                 doc.text(`${invoice.subtotal.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
 
+                if (invoice.remise > 0) {
+                    y += 20;
+                    const remiseText = invoice.remiseType === '%' ? `Remise (${invoice.remise}%)` : 'Remise';
+                    const remiseValue = invoice.remiseType === '%' ? (invoice.subtotal * (invoice.remise / 100)) : invoice.remise;
+                    doc.text(remiseText, totalsLabelX, y, { align: 'right', width: 100 });
+                    doc.text(`-${remiseValue.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
+                }
+
                 if (invoice.taxRate > 0) {
-                    y += 30; // Increased spacing for TVA as well
+                    y += 20; // Ensure spacing is consistent
                     doc.text(`TVA (${invoice.taxRate}%)`, totalsLabelX, y, { align: 'right', width: 100 });
                     doc.text(`${invoice.taxAmount.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
                 }
@@ -341,8 +349,16 @@ const pdfService = {
                 doc.text('Sous-total', totalsLabelX, y, { align: 'right', width: 100 });
                 doc.text(`${devis.subtotal.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
 
+                if (devis.remise > 0) {
+                    y += 20;
+                    const remiseText = devis.remiseType === '%' ? `Remise (${devis.remise}%)` : 'Remise';
+                    const remiseValue = devis.remiseType === '%' ? (devis.subtotal * (devis.remise / 100)) : devis.remise;
+                    doc.text(remiseText, totalsLabelX, y, { align: 'right', width: 100 });
+                    doc.text(`-${remiseValue.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
+                }
+
                 if (devis.taxRate > 0) {
-                    y += 30;
+                    y += 20;
                     doc.text(`TVA (${devis.taxRate}%)`, totalsLabelX, y, { align: 'right', width: 100 });
                     doc.text(`${devis.taxAmount.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
                 }

@@ -3,7 +3,7 @@ const Invoice = require('../models/invoice.model');
 const invoiceService = {
     // Create new invoice
     createInvoice: async (data) => {
-        const { clientName, clientEmail, clientAddress, items, notes, dueDate, taxRate = 0 } = data;
+        const { clientName, clientEmail, clientAddress, items, notes, dueDate, taxRate = 0, remise = 0, remiseType = '%' } = data;
 
         if (!clientName || !items || items.length === 0) {
             throw new Error('Le nom du client et au moins un article sont requis');
@@ -16,8 +16,16 @@ const invoiceService = {
         }));
 
         const subtotal = calculatedItems.reduce((sum, item) => sum + item.total, 0);
-        const taxAmount = subtotal * (taxRate / 100);
-        const total = subtotal + taxAmount;
+
+        let subtotalAfterRemise = subtotal;
+        if (remiseType === '%') {
+            subtotalAfterRemise = subtotal - (subtotal * (remise / 100));
+        } else if (remiseType === 'dh') {
+            subtotalAfterRemise = Math.max(0, subtotal - remise);
+        }
+
+        const taxAmount = subtotalAfterRemise * (taxRate / 100);
+        const total = subtotalAfterRemise + taxAmount;
 
         // Generate invoice number
         const invoiceNumber = await Invoice.generateInvoiceNumber();
@@ -29,6 +37,8 @@ const invoiceService = {
             clientAddress: clientAddress || '',
             items: calculatedItems,
             subtotal,
+            remise,
+            remiseType,
             taxRate,
             taxAmount,
             total,
@@ -68,7 +78,7 @@ const invoiceService = {
 
     // Update full invoice
     updateInvoice: async (id, data) => {
-        const { clientName, clientEmail, clientAddress, items, notes, dueDate, taxRate = 0 } = data;
+        const { clientName, clientEmail, clientAddress, items, notes, dueDate, taxRate = 0, remise = 0, remiseType = '%' } = data;
 
         if (!clientName || !items || items.length === 0) {
             throw new Error('Le nom du client et au moins un article sont requis');
@@ -80,14 +90,22 @@ const invoiceService = {
         }));
 
         const subtotal = calculatedItems.reduce((sum, item) => sum + item.total, 0);
-        const taxAmount = subtotal * (taxRate / 100);
-        const total = subtotal + taxAmount;
+
+        let subtotalAfterRemise = subtotal;
+        if (remiseType === '%') {
+            subtotalAfterRemise = subtotal - (subtotal * (remise / 100));
+        } else if (remiseType === 'dh') {
+            subtotalAfterRemise = Math.max(0, subtotal - remise);
+        }
+
+        const taxAmount = subtotalAfterRemise * (taxRate / 100);
+        const total = subtotalAfterRemise + taxAmount;
 
         return await Invoice.findByIdAndUpdate(
             id,
             {
                 clientName, clientEmail: clientEmail || '', clientAddress: clientAddress || '',
-                items: calculatedItems, subtotal, taxRate, taxAmount, total,
+                items: calculatedItems, subtotal, remise, remiseType, taxRate, taxAmount, total,
                 notes: notes || '', dueDate: dueDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
             },
             { new: true }

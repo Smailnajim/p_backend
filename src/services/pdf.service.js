@@ -133,6 +133,13 @@ const pdfService = {
 
                 invoice.items.forEach((item, i) => {
                     const rowHeight = 25;
+                    
+                    // Check if we need a new page
+                    if (y > 700) {
+                        doc.addPage();
+                        y = 50;
+                    }
+
                     // Zebra striping
                     if (i % 2 === 0) {
                         doc.rect(50, y - 5, 500, rowHeight).fill(Colors.background);
@@ -153,7 +160,13 @@ const pdfService = {
                 doc.moveTo(50, y + 10).lineTo(550, y + 10).strokeColor(Colors.border).stroke();
 
                 // --- Totals ---
-                y += 20;
+                if (y > 600) {
+                    doc.addPage();
+                    y = 50;
+                } else {
+                    y += 20;
+                }
+                
                 const totalsLabelX = 350;
                 const totalsValueX = 500; // Alignment point for values
 
@@ -162,16 +175,8 @@ const pdfService = {
                 doc.text('Sous-total', totalsLabelX, y, { align: 'right', width: 100 });
                 doc.text(`${invoice.subtotal.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
 
-                if (invoice.remise > 0) {
-                    y += 20;
-                    const remiseText = invoice.remiseType === '%' ? `Remise (${invoice.remise}%)` : 'Remise';
-                    const remiseValue = invoice.remiseType === '%' ? (invoice.subtotal * (invoice.remise / 100)) : invoice.remise;
-                    doc.text(remiseText, totalsLabelX, y, { align: 'right', width: 100 });
-                    doc.text(`-${remiseValue.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
-                }
-
                 if (invoice.taxRate > 0) {
-                    y += 20; // Ensure spacing is consistent
+                    y += 30; // Increased spacing for TVA as well
                     doc.text(`TVA (${invoice.taxRate}%)`, totalsLabelX, y, { align: 'right', width: 100 });
                     doc.text(`${invoice.taxAmount.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
                 }
@@ -327,6 +332,12 @@ const pdfService = {
 
                 devis.items.forEach((item, i) => {
                     const rowHeight = 25;
+                    
+                    if (y > 700) {
+                        doc.addPage();
+                        y = 50;
+                    }
+
                     if (i % 2 === 0) {
                         doc.rect(50, y - 5, 500, rowHeight).fill(Colors.background);
                     }
@@ -341,7 +352,13 @@ const pdfService = {
                 doc.moveTo(50, y + 10).lineTo(550, y + 10).strokeColor(Colors.border).stroke();
 
                 // --- Totals ---
-                y += 20;
+                if (y > 600) {
+                    doc.addPage();
+                    y = 50;
+                } else {
+                    y += 20;
+                }
+                
                 const totalsLabelX = 350;
                 const totalsValueX = 500;
 
@@ -349,16 +366,8 @@ const pdfService = {
                 doc.text('Sous-total', totalsLabelX, y, { align: 'right', width: 100 });
                 doc.text(`${devis.subtotal.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
 
-                if (devis.remise > 0) {
-                    y += 20;
-                    const remiseText = devis.remiseType === '%' ? `Remise (${devis.remise}%)` : 'Remise';
-                    const remiseValue = devis.remiseType === '%' ? (devis.subtotal * (devis.remise / 100)) : devis.remise;
-                    doc.text(remiseText, totalsLabelX, y, { align: 'right', width: 100 });
-                    doc.text(`-${remiseValue.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
-                }
-
                 if (devis.taxRate > 0) {
-                    y += 20;
+                    y += 30;
                     doc.text(`TVA (${devis.taxRate}%)`, totalsLabelX, y, { align: 'right', width: 100 });
                     doc.text(`${devis.taxAmount.toFixed(2)} DH`, totalsValueX, y, { align: 'right', width: 50 });
                 }
